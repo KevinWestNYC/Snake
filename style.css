@@ -1,4 +1,4 @@
-.snake-grid { border-spacing: 0; border-collapse: collapse; }
+/* .snake-grid { border-spacing: 0; border-collapse: collapse; }
 .snake-grid th { padding: .5em; }
 .snake-grid td { border: 1px solid rgba(0, 0, 0, 0.1); width: 2em; height: 2em; }
 .snake-grid .light { background: seagreen; }
@@ -6,4 +6,4 @@
 
 .apple{
     background-color: red;
-}
+} */
