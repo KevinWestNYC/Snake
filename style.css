@@ -7,3 +7,7 @@
 .apple{
     background-color: red;
 } */
+
+p{
+    display: inline;
+}

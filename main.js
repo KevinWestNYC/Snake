@@ -7,11 +7,15 @@ let appleX = 200;
 let appleY = 240;
 let snakeSpeedX = 40;
 let snakeSpeedY = 40;
+let direction ='';
+let currentScore = 0;
+let highScore = 0;
+
 
 window.onload = function() {
     canvas = document.getElementById('gameCanvas');
     canvasContext = canvas.getContext('2d');
-    let framesPerSecond = 3;
+    let framesPerSecond = 8;
     setInterval(function() {
         drawEverything();
         moveEverything();
@@ -20,28 +24,11 @@ window.onload = function() {
 }
 
 function moveEverything(){
-    document.onkeydown = function(e) {
-        switch (e.keyCode) {
-            case 37:
-                snakeHeadX -= snakeSpeedX
-                // alert('left');
-                break;
-            case 38:
-                snakeHeadY -= snakeSpeedY    
-                // alert('up');
-                break;
-            case 39:
-                snakeHeadX += snakeSpeedX
-                // alert('right');
-                break;
-            case 40:
-                snakeHeadY += snakeSpeedY
-                // alert('down');
-                break;
-        }
-    };
+  moveSnake();
 
 }
+
+
 
 function drawEverything(){
     drawCheckerboard();
@@ -49,10 +36,14 @@ function drawEverything(){
     drawSnake();
     
     if(snakeHeadX === appleX && snakeHeadY === appleY){
-        randomlyPlaceApple()
+      randomlyPlaceApple();
+      addScore();
+      createHighScore();
     }
 
 }
+
+
 
 function colorRect(leftX, topY, width, height, drawColor){
     canvasContext.fillStyle = drawColor;
@@ -82,16 +73,65 @@ function drawCheckerboard() {
   }
 
   function randomlyPlaceApple(){
-      appleX = generateRandomNumber(0, 600, 40);
-      appleY = generateRandomNumber(0, 600, 40);
-    }
+      appleX = generateRandomNumber(0, canvas.width, squareSize);
+      appleY = generateRandomNumber(0, canvas.height, squareSize);
+      return drawApple(appleX, appleY);
+}
 
 function generateRandomNumber(min, max, multiple) {
     let randomNumber = Math.floor(Math.random() * ((max - min) / multiple)) * multiple + min;
     return randomNumber;
     }
 
-  function drawSnake(){
+  function chooseSnakeDirection(){
+    document.onkeydown = function(e) {
+      event.preventDefault();
+      switch (e.keyCode) {
+          case 37:
+              if(direction != 'right'){
+              direction='left';
+              }
+              break;
+          case 38:
+              if(direction != 'down'){
+              direction = 'up';
+              }
+              break;
+          case 39:
+              if(direction != 'left'){
+              direction='right';
+              }
+              break;
+          case 40:
+              if(direction != 'up'){
+              direction='down';
+              }
+              break;
+      }
+  }
+  return direction;
+}
+
+function moveSnake(){
+  chooseSnakeDirection()
+    switch(direction){
+    case 'left':
+    snakeHeadX += -snakeSpeedX;
+    break;
+    case 'up':
+    snakeHeadY += -snakeSpeedY ;
+    break;
+    case 'right':
+    snakeHeadX += snakeSpeedX;  
+    break;
+    case 'down':
+    snakeHeadY += snakeSpeedY; 
+    break;
+
+  }
+}
+  
+    function drawSnake(){
     drawSnakeHead(snakeHeadX,snakeHeadY);
     drawSnakeBody();
     drawSnakeTail();
@@ -109,21 +149,23 @@ function generateRandomNumber(min, max, multiple) {
     colorRect(80, 240, squareSize, squareSize, "white")
   }
 
+  function tellIfSquareIsOccupied(){
+    if(canvas.fillStyle === white){
+        return true
+    } return false
+}
 
+function addScore(){
+    currentScore += 1;
+    document.getElementById("current-score").textContent = currentScore;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+function createHighScore(){
+  if(currentScore >= highScore){
+    highScore = currentScore;
+    document.getElementById("high-score").textContent = highScore
+  }
+}
 
 
 
