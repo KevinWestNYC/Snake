@@ -1,15 +1,22 @@
 let canvas;
 let canvasContext;
 const squareSize = 40;
-let snakeHeadX = 160;
-let snakeHeadY = 240;
-let appleX = 200;
-let appleY = 240;
-let snakeSpeedX = 40;
-let snakeSpeedY = 40;
-let direction ='';
 let currentScore = 0;
 let highScore = 0;
+let appleX = 200;
+let appleY = 240;
+let snakeMoveByOneSquare = 40;
+let direction ='';
+let snakeHeadX = 160;
+let snakeHeadY = 240;
+
+let snakeBody = [
+  {x:160, y:240},
+  {x:120, y:240},
+  {x:80, y:240}
+]
+
+let snakeCopy = []
 
 
 window.onload = function() {
@@ -24,8 +31,8 @@ window.onload = function() {
 }
 
 function moveEverything(){
-  moveSnake();
-
+  moveSnakeHead();
+  // makeSnakeBodyFollowSnakeHead()
 }
 
 
@@ -35,50 +42,33 @@ function drawEverything(){
     drawApple(appleX, appleY);
     drawSnake();
     
-    if(snakeHeadX === appleX && snakeHeadY === appleY){
+    if(snakeBody[0].x === appleX && snakeBody[0].y === appleY){
       randomlyPlaceApple();
       addScore();
       createHighScore();
     }
-
 }
 
 
 
-function colorRect(leftX, topY, width, height, drawColor){
+function colorRectangle(leftX, topY, width, height, drawColor){
     canvasContext.fillStyle = drawColor;
     canvasContext.fillRect(leftX, topY, width, height);
 }
 
-function drawCheckerboard() {
-    
-    const boardTopX = 0;
-    const boardTopY = 0;
 
-    for(let i=0; i<15; i++) {
-      for(let j=0; j<15; j++) {
-        canvasContext.fillStyle = ((i+j)%2==0) ? "seagreen":"green";
-        let xOffset = boardTopX + j*squareSize;
-        let yOffset = boardTopY + i*squareSize;
-        canvasContext.fillRect(xOffset, yOffset, squareSize, squareSize);
-      }
-    }
-    
-    canvasContext.strokeStyle = "black";
-    canvasContext.strokeRect(boardTopX, boardTopY, squareSize*15, squareSize*15)
-  }
 
   function drawApple(appleX, appleY){
-    colorRect(appleX, appleY, squareSize, squareSize, 'red')
+    colorRectangle(appleX, appleY, squareSize, squareSize, 'red')
   }
 
   function randomlyPlaceApple(){
-      appleX = generateRandomNumber(0, canvas.width, squareSize);
-      appleY = generateRandomNumber(0, canvas.height, squareSize);
+      appleX = generateRandomGridNumber(0, canvas.width, squareSize);
+      appleY = generateRandomGridNumber(0, canvas.height, squareSize);
       return drawApple(appleX, appleY);
 }
 
-function generateRandomNumber(min, max, multiple) {
+function generateRandomGridNumber(min, max, multiple) {
     let randomNumber = Math.floor(Math.random() * ((max - min) / multiple)) * multiple + min;
     return randomNumber;
     }
@@ -112,41 +102,46 @@ function generateRandomNumber(min, max, multiple) {
   return direction;
 }
 
-function moveSnake(){
+function moveSnakeHead(){
   chooseSnakeDirection()
     switch(direction){
     case 'left':
-    snakeHeadX += -snakeSpeedX;
+      snakeBody[0].x += -snakeMoveByOneSquare;
     break;
     case 'up':
-    snakeHeadY += -snakeSpeedY ;
+      snakeBody[0].y += -snakeMoveByOneSquare ;
     break;
     case 'right':
-    snakeHeadX += snakeSpeedX;  
+      snakeBody[0].x += snakeMoveByOneSquare;  
     break;
     case 'down':
-    snakeHeadY += snakeSpeedY; 
+      snakeBody[0].y += snakeMoveByOneSquare; 
     break;
 
   }
 }
+
+// function makeSnakeBodyFollowSnakeHead(){
+
+// spaceship = {type: 'alien'}; // TypeError: Assignment to constant variable.
+// spaceship.type = 'alien'; // Changes the value of the type property
+
+// }
   
-    function drawSnake(){
-    drawSnakeHead(snakeHeadX,snakeHeadY);
-    drawSnakeBody();
-    drawSnakeTail();
-  }
+  //   function drawSnake(){
+  //   drawSnakeHead(snakeBody[0].x, snakeBody[0].y);
+  //   drawSnakeBody();
+    
+  // }
 
-  function drawSnakeHead(snakeHeadX,snakeHeadY){
-    colorRect(snakeHeadX, snakeHeadY, squareSize, squareSize, "white");
-  }
+  // function drawSnakeHead(snakeHeadX,snakeHeadY){
+  //   colorRectangle(snakeBody[0].x, snakeBody[0].y, squareSize, squareSize, "white");
+  // }
 
-  function drawSnakeBody(){
-    colorRect(120, 240, squareSize, squareSize, "white")
-  }
-
-  function drawSnakeTail(){
-    colorRect(80, 240, squareSize, squareSize, "white")
+  function drawSnake(){
+    for(let i=0; i<snakeBody.length; i++){
+    colorRectangle(snakeBody[i].x, snakeBody[i].y, squareSize, squareSize, "white")
+    }
   }
 
   function tellIfSquareIsOccupied(){
@@ -167,6 +162,24 @@ function createHighScore(){
   }
 }
 
+function drawCheckerboard() {
+    
+  const boardTopX = 0;
+  const boardTopY = 0;
+
+  for(let i=0; i<15; i++) {
+    for(let j=0; j<15; j++) {
+      canvasContext.fillStyle = ((i+j)%2==0) ? "seagreen":"green";
+      let xOffset = boardTopX + j*squareSize;
+      let yOffset = boardTopY + i*squareSize;
+      canvasContext.fillRect(xOffset, yOffset, squareSize, squareSize);
+    }
+  }
+  
+  canvasContext.strokeStyle = "black";
+  canvasContext.strokeRect(boardTopX, boardTopY, squareSize*15, squareSize*15)
+}
+
 
 
 // event listeners for the keys 
@@ -176,3 +189,4 @@ function createHighScore(){
 // game over if hits wall or itself
 // get lead snake box location
 // grow snake after each apple 
+//portal that gives you big bonus multiplier, but reenters you randomly
