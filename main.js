@@ -7,8 +7,7 @@ let appleX = 200;
 let appleY = 240;
 let snakeMoveByOneSquare = 40;
 let direction ='';
-let snakeHeadX = 160;
-let snakeHeadY = 240;
+
 
 let snakeBody = [
   {x:160, y:240},
@@ -16,7 +15,7 @@ let snakeBody = [
   {x:80, y:240}
 ]
 
-let snakeCopy = []
+let snakeBodyCopy = []
 
 
 window.onload = function() {
@@ -32,7 +31,8 @@ window.onload = function() {
 
 function moveEverything(){
   moveSnakeHead();
-  // makeSnakeBodyFollowSnakeHead()
+  makeSnakeBodyFollowSnakeHead();
+  console.log(snakeBodyCopy);
 }
 
 
@@ -75,7 +75,7 @@ function generateRandomGridNumber(min, max, multiple) {
 
   function chooseSnakeDirection(){
     document.onkeydown = function(e) {
-      event.preventDefault();
+      e.preventDefault();
       switch (e.keyCode) {
           case 37:
               if(direction != 'right'){
@@ -117,26 +117,17 @@ function moveSnakeHead(){
     case 'down':
       snakeBody[0].y += snakeMoveByOneSquare; 
     break;
-
   }
 }
 
-// function makeSnakeBodyFollowSnakeHead(){
-
-// spaceship = {type: 'alien'}; // TypeError: Assignment to constant variable.
-// spaceship.type = 'alien'; // Changes the value of the type property
-
-// }
-  
-  //   function drawSnake(){
-  //   drawSnakeHead(snakeBody[0].x, snakeBody[0].y);
-  //   drawSnakeBody();
-    
-  // }
-
-  // function drawSnakeHead(snakeHeadX,snakeHeadY){
-  //   colorRectangle(snakeBody[0].x, snakeBody[0].y, squareSize, squareSize, "white");
-  // }
+function makeSnakeBodyFollowSnakeHead(){
+  snakeBodyCopy = snakeBody.map(x => x);
+  for(let i=1; i<snakeBody.length; i++){
+    for(let j=0; j<snakeBodyCopy.length; j++){
+      snakeBody[i] = snakeBodyCopy[i-1]
+    }
+  }
+}
 
   function drawSnake(){
     for(let i=0; i<snakeBody.length; i++){
