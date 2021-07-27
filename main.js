@@ -1,12 +1,12 @@
-let canvas;
+let canvas = document.getElementById('gameCanvas');
 let canvasContext;
 const squareSize = 40;
 let currentScore = 0;
 let highScore = 0;
-let appleX = 200;
+let appleX = 400;
 let appleY = 240;
 let snakeMoveByOneSquare = 40;
-let direction ='';
+let direction ='right';
 
 
 let snakeBody = [
@@ -15,27 +15,25 @@ let snakeBody = [
   {x:80, y:240}
 ]
 
-let snakeBodyCopy = []
-
 
 window.onload = function() {
-    canvas = document.getElementById('gameCanvas');
+    
     canvasContext = canvas.getContext('2d');
     let framesPerSecond = 8;
+    startScreen();
     setInterval(function() {
         drawEverything();
         moveEverything();
+        console.log("occupied "+ tellIfSquareIsOccupied());
+        console.log("bound " + tellIfSnakeHitBoundary());
     }, 1000/framesPerSecond);
 
 }
 
 function moveEverything(){
-  moveSnakeHead();
   makeSnakeBodyFollowSnakeHead();
-  console.log(snakeBodyCopy);
+  moveSnakeHead();
 }
-
-
 
 function drawEverything(){
     drawCheckerboard();
@@ -44,11 +42,15 @@ function drawEverything(){
     
     if(snakeBody[0].x === appleX && snakeBody[0].y === appleY){
       randomlyPlaceApple();
+      addOneBlockToTheBody()
       addScore();
       createHighScore();
     }
 }
 
+function addOneBlockToTheBody(){
+  snakeBody.push({x:snakeBody[snakeBody.length-1].x, y:snakeBody[snakeBody.length-1].y})
+}
 
 
 function colorRectangle(leftX, topY, width, height, drawColor){
@@ -121,11 +123,8 @@ function moveSnakeHead(){
 }
 
 function makeSnakeBodyFollowSnakeHead(){
-  snakeBodyCopy = snakeBody.map(x => x);
-  for(let i=1; i<snakeBody.length; i++){
-    for(let j=0; j<snakeBodyCopy.length; j++){
-      snakeBody[i] = snakeBodyCopy[i-1]
-    }
+  for(let i=snakeBody.length-1; i>0; i--){
+      snakeBody[i] = Object.assign({}, snakeBody[i-1])
   }
 }
 
@@ -134,12 +133,6 @@ function makeSnakeBodyFollowSnakeHead(){
     colorRectangle(snakeBody[i].x, snakeBody[i].y, squareSize, squareSize, "white")
     }
   }
-
-  function tellIfSquareIsOccupied(){
-    if(canvas.fillStyle === white){
-        return true
-    } return false
-}
 
 function addScore(){
     currentScore += 1;
@@ -169,6 +162,44 @@ function drawCheckerboard() {
   
   canvasContext.strokeStyle = "black";
   canvasContext.strokeRect(boardTopX, boardTopY, squareSize*15, squareSize*15)
+}
+
+function startScreen(){
+  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+
+}
+
+function tellIfSquareIsOccupied(){
+ for(let i=1; i<snakeBody.length-1; i++){
+    if(snakeBody[0] === snakeBody[i]){
+    return true
+    } else {
+    return false
+    }
+  } 
+}
+// snakeBody[0] === snakeBody[i]
+// (snakeBody[0].x, snakeBody[0].y) === (snakeBody[i].x, snakeBody[i].y)
+
+
+function tellIfSnakeHitBoundary(){
+  if(snakeBody[0].x > canvas.width ||
+    snakeBody[0].x < 0 ||
+    snakeBody[0].y > canvas.height ||
+    snakeBody[0].y < 0){
+      return true
+    } else {
+      return false
+    }
+}
+
+function gameOver(){
+if(tellIfSnakeHitBoundary(snakeBody[0].x,snakeBody[0].y)){
+  
+  return true
+}else{
+  return false
+}
 }
 
 
