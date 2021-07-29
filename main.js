@@ -1,6 +1,5 @@
 // dont let snake go opposite direction (tighten up)
 //don't let apple appear under snake body
-//create start screen
 
 document.addEventListener("keyup",startNewGameAfterGameOver)
 
@@ -10,16 +9,22 @@ window.onload = function() {
     drawCheckerboard();
     drawApple(appleX, appleY);
     drawSnake();
+    highScore = localStorage.getItem('highScore');
+    document.getElementById("high-score").textContent = highScore;
+    
     
     canvasContext.fillStyle = 'white';
     canvasContext.font = "25px 'Press Start 2P'"
     canvasContext.fillText("Press -> To Start", 95, 350);
+    
     document.addEventListener("keyup", function(e){
-     if(e.keycode = 39){
-      showingStartScreen = false
+     if((e.code === "ArrowRight" || e.code === "Space") && !isGameStarted){
+      showingStartScreen = false;
+      isGameStarted = true;
+      clearInterval(interval);
 
 
-    setInterval(function() {
+    interval = setInterval(function() {
       gameOver();  
       moveEverything();
       drawEverything();
@@ -78,6 +83,8 @@ function drawEverything(){
       }
       return;
   }
+
+    
 }
       
 
@@ -103,7 +110,7 @@ function colorRectangle(leftX, topY, width, height, drawColor){
       appleX = generateRandomGridNumber(0, canvas.width, squareSize);
       appleY = generateRandomGridNumber(0, canvas.height, squareSize);
       if(!tellIfSquareIsOccupied(appleX, appleY)){  
-      return drawApple(appleX, appleY);
+      drawApple(appleX, appleY);
       } 
     };
       
@@ -236,7 +243,13 @@ function gameOver(){
   if(tellIfSnakeHitBoundary() || tellIfSquareIsOccupied(snakeBody[0].x, snakeBody[0].y)){ 
     direction = " ";
     showingGameOverScreen = true;
-    return true
+    isGameStarted = false;
+    if(snakeBody[0].x === snakeBody[snakeBody.length-1].x && snakeBody[0].y === snakeBody[snakeBody.length-1].y ){
+      canvasContext.drawImage(img, snakeBody[0].x, snakeBody[0].y, 40, 40);
+    }
+
+    return true;
+    
     }
   }
 
@@ -251,7 +264,11 @@ function gameOver(){
   let snakeMoveByOneSquare = 40;
   let direction ='right';
   let showingStartScreen = true;
+  let isGameStarted = false;
   let showingGameOverScreen = false;
+  let interval;
+  var img = new Image();
+  img.src = 'https://thumbs.dreamstime.com/t/sad-cartoon-cobra-cartoon-illustration-cobra-looking-sad-115750019.jpg';
   
   
   let snakeBody = [
