@@ -8,6 +8,19 @@
     background-color: red;
 } */
 
+#scoreboard{
+    font-family: 'Press Start 2P', cursive;
+    font-size: 20px;
+    text-align: center;
+    margin: auto;
+    width: 50%;
+    padding: 20px
+}
+
 p{
     display: inline;
+}
+
+#canvas-div{
+    text-align:center;
 }

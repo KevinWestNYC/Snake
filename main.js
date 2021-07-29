@@ -1,33 +1,49 @@
-let canvas = document.getElementById('gameCanvas');
-let canvasContext;
-const squareSize = 40;
-let currentScore = 0;
-let highScore = 0;
-let appleX = 400;
-let appleY = 240;
-let snakeMoveByOneSquare = 40;
-let direction ='right';
+// dont let snake go opposite direction (tighten up)
+//don't let apple appear under snake body
+//create start screen
+
+document.addEventListener("keyup",startNewGameAfterGameOver)
 
 
-let snakeBody = [
-  {x:160, y:240},
-  {x:120, y:240},
-  {x:80, y:240}
-]
+window.onload = function() {  
+  // if(showingStartScreen){
+  //  document.addEventListener("keyup", function(e){
+  //    if(e.keycode = 39){
+  //     showingStartScreen = false
 
 
-window.onload = function() {
-    
-    canvasContext = canvas.getContext('2d');
-    let framesPerSecond = 8;
-    startScreen();
     setInterval(function() {
-        drawEverything();
-        moveEverything();
-        console.log("occupied "+ tellIfSquareIsOccupied());
-        console.log("bound " + tellIfSnakeHitBoundary());
+      gameOver();  
+      moveEverything();
+      drawEverything();
     }, 1000/framesPerSecond);
+//   }
+//   })
+// }
+  }
 
+  
+
+function startNewGameAfterGameOver(e){
+  if(e.keyCode == 32){
+  if(showingGameOverScreen){
+    showingWinScreen = false;
+    showingGameOverScreen = false;
+    snakeBody = [
+      {x:80, y:240},
+      {x:40, y:240}
+    ];
+    appleX = 400;
+    appleY = 240;
+    direction = "right";
+    document.getElementById('current-score').textContent = 0;
+    currentScore = 0;
+  }
+
+  if(showingStartScreen){
+    showingStartScreen = false;
+    }
+  }
 }
 
 function moveEverything(){
@@ -36,6 +52,9 @@ function moveEverything(){
 }
 
 function drawEverything(){
+    highScore = localStorage.getItem('highScore');
+    document.getElementById("high-score").textContent = highScore;
+
     drawCheckerboard();
     drawApple(appleX, appleY);
     drawSnake();
@@ -46,7 +65,19 @@ function drawEverything(){
       addScore();
       createHighScore();
     }
+
+    if(showingGameOverScreen){
+      canvasContext.fillStyle = 'white';
+      if(gameOver()){
+        canvasContext.font = "50px 'Press Start 2P'"
+      canvasContext.fillText("GAME OVER", 78, 300);
+      canvasContext.font = "15px 'Press Start 2P'"
+      canvasContext.fillText("Press Space To Try Again", 120, 350);
+      }
+      return;
+  }
 }
+      
 
 function addOneBlockToTheBody(){
   snakeBody.push({x:snakeBody[snakeBody.length-1].x, y:snakeBody[snakeBody.length-1].y})
@@ -62,13 +93,25 @@ function colorRectangle(leftX, topY, width, height, drawColor){
 
   function drawApple(appleX, appleY){
     colorRectangle(appleX, appleY, squareSize, squareSize, 'red')
+    canvasContext.strokeStyle = "FireBrick";
+  canvasContext.strokeRect(appleX, appleY, squareSize, squareSize)
   }
 
   function randomlyPlaceApple(){
       appleX = generateRandomGridNumber(0, canvas.width, squareSize);
       appleY = generateRandomGridNumber(0, canvas.height, squareSize);
-      return drawApple(appleX, appleY);
-}
+      for(let i=1; i<snakeBody.length; i++){
+        if(appleX !== snakeBody[i].x &&
+          appleY !== snakeBody[i].y){
+            return drawApple(appleX, appleY);
+        } else {
+          appleX = generateRandomGridNumber(0, canvas.width, squareSize);
+          appleY = generateRandomGridNumber(0, canvas.height, squareSize);
+          return drawApple(appleX, appleY);
+        }
+      } 
+    };
+      
 
 function generateRandomGridNumber(min, max, multiple) {
     let randomNumber = Math.floor(Math.random() * ((max - min) / multiple)) * multiple + min;
@@ -119,6 +162,8 @@ function moveSnakeHead(){
     case 'down':
       snakeBody[0].y += snakeMoveByOneSquare; 
     break;
+    case " ":
+      snakeBody[0].y + 0;
   }
 }
 
@@ -130,8 +175,12 @@ function makeSnakeBodyFollowSnakeHead(){
 
   function drawSnake(){
     for(let i=0; i<snakeBody.length; i++){
-    colorRectangle(snakeBody[i].x, snakeBody[i].y, squareSize, squareSize, "white")
+    colorRectangle(snakeBody[i].x, snakeBody[i].y, squareSize, squareSize, "palegreen")
+    canvasContext.strokeStyle = "DimGray";
+    canvasContext.strokeRect(snakeBody[i].x, snakeBody[i].y, squareSize, squareSize)
     }
+    
+    
   }
 
 function addScore(){
@@ -140,9 +189,10 @@ function addScore(){
 }
 
 function createHighScore(){
-  if(currentScore >= highScore){
+  if(currentScore > highScore){
     highScore = currentScore;
-    document.getElementById("high-score").textContent = highScore
+    document.getElementById("high-score").textContent = highScore;
+    localStorage.setItem('highScore', highScore);
   }
 }
 
@@ -157,6 +207,8 @@ function drawCheckerboard() {
       let xOffset = boardTopX + j*squareSize;
       let yOffset = boardTopY + i*squareSize;
       canvasContext.fillRect(xOffset, yOffset, squareSize, squareSize);
+      canvasContext.strokeStyle = "rgba(0, 0, 0, 0.1)"
+      canvasContext.strokeRect(xOffset, yOffset, squareSize, squareSize)
     }
   }
   
@@ -170,23 +222,20 @@ function startScreen(){
 }
 
 function tellIfSquareIsOccupied(){
- for(let i=1; i<snakeBody.length-1; i++){
-    if(snakeBody[0] === snakeBody[i]){
+ for(let i=1; i<snakeBody.length; i++){
+    if(snakeBody[0].x === snakeBody[i].x &&
+      snakeBody[0].y === snakeBody[i].y){
     return true
-    } else {
-    return false
     }
   } 
-}
-// snakeBody[0] === snakeBody[i]
-// (snakeBody[0].x, snakeBody[0].y) === (snakeBody[i].x, snakeBody[i].y)
+};
 
 
 function tellIfSnakeHitBoundary(){
-  if(snakeBody[0].x > canvas.width ||
+  if(snakeBody[0].x > canvas.width - squareSize ||
     snakeBody[0].x < 0 ||
-    snakeBody[0].y > canvas.height ||
-    snakeBody[0].y < 0){
+    snakeBody[0].y > canvas.height - squareSize ||
+    snakeBody[0].y < 0 ){
       return true
     } else {
       return false
@@ -194,21 +243,32 @@ function tellIfSnakeHitBoundary(){
 }
 
 function gameOver(){
-if(tellIfSnakeHitBoundary(snakeBody[0].x,snakeBody[0].y)){
+  if(tellIfSnakeHitBoundary() || tellIfSquareIsOccupied()){ 
+    direction = " ";
+    showingGameOverScreen = true;
+    return true
+    }
+  }
+
+  const canvas = document.getElementById('gameCanvas');
+  const canvasContext = canvas.getContext('2d');
+  const squareSize = 40;
+  const framesPerSecond = 8;
+  let currentScore = 0;
+  let highScore = 0;
+  let appleX = 400;
+  let appleY = 240;
+  let snakeMoveByOneSquare = 40;
+  let direction ='right';
+  let showingStartScreen = true;
+  let showingGameOverScreen = false;
   
-  return true
-}else{
-  return false
-}
-}
+  
+  let snakeBody = [
+    {x:80, y:240},
+    {x:40, y:240}
+  ]
 
-
-
-// event listeners for the keys 
-// make snake move in desired direction
-// make last snake cube go to the location of the box before it
-// dont let snake go opposite direction 
-// game over if hits wall or itself
-// get lead snake box location
-// grow snake after each apple 
 //portal that gives you big bonus multiplier, but reenters you randomly
+// after snake body gathers following game-over, hiss animation
+//snake jazz background w volume button to turn off

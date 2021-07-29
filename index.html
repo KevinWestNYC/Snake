@@ -6,16 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Ssssnake</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel = "icon" href = 
 "https://banner2.cleanpng.com/20180407/sbw/kisspng-snake-animation-cartoon-clip-art-cartoon-logo-5ac88de481c318.7755569215230929645315.jpg" 
         type = "image/x-icon">
 </head>
 <body>
-    <div>
-        <p>High Score: </p><p id="high-score">0</p>
-        <p>Current Score: </p><p id="current-score">0</p>
+    <div id="scoreboard">
+        <p>High Score:</p><p id="high-score">0</p><p>  </p>
+        
+        <p>Current Score:</p><p id="current-score">0</p>
     </div>
-    <canvas id="gameCanvas" width="600" height="600"></canvas>
+    <div id="canvas-div">
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+    </div>
 </body>
 <script src="main.js"></script>
 </html>
