@@ -1,12 +1,10 @@
-/* .snake-grid { border-spacing: 0; border-collapse: collapse; }
-.snake-grid th { padding: .5em; }
-.snake-grid td { border: 1px solid rgba(0, 0, 0, 0.1); width: 2em; height: 2em; }
-.snake-grid .light { background: seagreen; }
-.snake-grid .dark { background: green }
-
-.apple{
-    background-color: red;
-} */
+#title{
+    font-size: 50px;
+    text-align: center;
+    margin: auto;
+    width: 50%;
+    font-family: 'Press Start 2P', cursive;
+}
 
 #scoreboard{
     font-family: 'Press Start 2P', cursive;
@@ -14,7 +12,7 @@
     text-align: center;
     margin: auto;
     width: 50%;
-    padding: 20px
+    padding: 5px
 }
 
 p{

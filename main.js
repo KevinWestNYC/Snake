@@ -6,10 +6,17 @@ document.addEventListener("keyup",startNewGameAfterGameOver)
 
 
 window.onload = function() {  
-  // if(showingStartScreen){
-  //  document.addEventListener("keyup", function(e){
-  //    if(e.keycode = 39){
-  //     showingStartScreen = false
+  if(showingStartScreen){
+    drawCheckerboard();
+    drawApple(appleX, appleY);
+    drawSnake();
+    
+    canvasContext.fillStyle = 'white';
+    canvasContext.font = "25px 'Press Start 2P'"
+    canvasContext.fillText("Press -> To Start", 95, 350);
+    document.addEventListener("keyup", function(e){
+     if(e.keycode = 39){
+      showingStartScreen = false
 
 
     setInterval(function() {
@@ -17,12 +24,11 @@ window.onload = function() {
       moveEverything();
       drawEverything();
     }, 1000/framesPerSecond);
-//   }
-//   })
-// }
+  }
+  })
+}
   }
 
-  
 
 function startNewGameAfterGameOver(e){
   if(e.keyCode == 32){
@@ -30,18 +36,14 @@ function startNewGameAfterGameOver(e){
     showingWinScreen = false;
     showingGameOverScreen = false;
     snakeBody = [
-      {x:80, y:240},
-      {x:40, y:240}
+      {x:120, y:240},
+      {x:80, y:240}
     ];
-    appleX = 400;
+    appleX = 440;
     appleY = 240;
     direction = "right";
     document.getElementById('current-score').textContent = 0;
     currentScore = 0;
-  }
-
-  if(showingStartScreen){
-    showingStartScreen = false;
     }
   }
 }
@@ -67,9 +69,9 @@ function drawEverything(){
     }
 
     if(showingGameOverScreen){
-      canvasContext.fillStyle = 'white';
       if(gameOver()){
-        canvasContext.font = "50px 'Press Start 2P'"
+      canvasContext.fillStyle = 'white';
+      canvasContext.font = "50px 'Press Start 2P'"
       canvasContext.fillText("GAME OVER", 78, 300);
       canvasContext.font = "15px 'Press Start 2P'"
       canvasContext.fillText("Press Space To Try Again", 120, 350);
@@ -100,15 +102,8 @@ function colorRectangle(leftX, topY, width, height, drawColor){
   function randomlyPlaceApple(){
       appleX = generateRandomGridNumber(0, canvas.width, squareSize);
       appleY = generateRandomGridNumber(0, canvas.height, squareSize);
-      for(let i=1; i<snakeBody.length; i++){
-        if(appleX !== snakeBody[i].x &&
-          appleY !== snakeBody[i].y){
-            return drawApple(appleX, appleY);
-        } else {
-          appleX = generateRandomGridNumber(0, canvas.width, squareSize);
-          appleY = generateRandomGridNumber(0, canvas.height, squareSize);
-          return drawApple(appleX, appleY);
-        }
+      if(!tellIfSquareIsOccupied(appleX, appleY)){  
+      return drawApple(appleX, appleY);
       } 
     };
       
@@ -216,15 +211,10 @@ function drawCheckerboard() {
   canvasContext.strokeRect(boardTopX, boardTopY, squareSize*15, squareSize*15)
 }
 
-function startScreen(){
-  canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-
-}
-
-function tellIfSquareIsOccupied(){
+function tellIfSquareIsOccupied(objectX, objectY){
  for(let i=1; i<snakeBody.length; i++){
-    if(snakeBody[0].x === snakeBody[i].x &&
-      snakeBody[0].y === snakeBody[i].y){
+    if(objectX === snakeBody[i].x &&
+      objectY === snakeBody[i].y){
     return true
     }
   } 
@@ -243,7 +233,7 @@ function tellIfSnakeHitBoundary(){
 }
 
 function gameOver(){
-  if(tellIfSnakeHitBoundary() || tellIfSquareIsOccupied()){ 
+  if(tellIfSnakeHitBoundary() || tellIfSquareIsOccupied(snakeBody[0].x, snakeBody[0].y)){ 
     direction = " ";
     showingGameOverScreen = true;
     return true
@@ -256,7 +246,7 @@ function gameOver(){
   const framesPerSecond = 8;
   let currentScore = 0;
   let highScore = 0;
-  let appleX = 400;
+  let appleX = 440;
   let appleY = 240;
   let snakeMoveByOneSquare = 40;
   let direction ='right';
@@ -265,8 +255,8 @@ function gameOver(){
   
   
   let snakeBody = [
-    {x:80, y:240},
-    {x:40, y:240}
+    {x:120, y:240},
+    {x:80, y:240}
   ]
 
 //portal that gives you big bonus multiplier, but reenters you randomly
