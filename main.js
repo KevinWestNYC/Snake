@@ -268,5 +268,6 @@ let snakeBody = [
   {x:80, y:240}
 ]
 
+//Future Add-ons
 //portal that gives you big bonus multiplier, but reenters you randomly
 // after snake body gathers following game-over, hiss animation
