@@ -22,4 +22,11 @@ p{
 
 #canvas-div{
     text-align:center;
+    z-index:1
+}
+
+#audio-button{
+    text-align: center;
+    width: 128%;
+    position:absolute;
 }
